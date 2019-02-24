@@ -8,6 +8,7 @@ class PaintByReference {
       renderCanvas,
       this.process
     );
+    this.previousFrame = null;
   }
 
   start() {
@@ -15,12 +16,20 @@ class PaintByReference {
   }
 
   process() {
-    const pixels = this.renderCtx.getImageData(0, 0, this.width, this.height);
-    for (let i = 0; i < pixels.data.length; i++) {
-      if (Math.random() < 0.01) {
-        pixels.data[i] = 0;
+    // get the current pixels
+    const oldPixels = this.renderCtx.getImageData(0, 0, this.width, this.height);
+    const newPixels = this.renderCtx.createImageData(this.width, this.height);
+
+    // paint the new pixels
+    if (this.previousFrame) {
+      for (let i = 0; i < newPixels.data.length; i++) {
+        newPixels.data[i] = Math.abs(oldPixels.data[i] - this.previousFrame.data[i]);
+        if (i % 4 === 3) newPixels.data[i] = 255;
       }
+      this.renderCtx.putImageData(newPixels, 0, 0);
     }
-    this.renderCtx.putImageData(pixels, 0, 0);
+
+    // save the current pixels for the next round
+    this.previousFrame = oldPixels;
   }
 }

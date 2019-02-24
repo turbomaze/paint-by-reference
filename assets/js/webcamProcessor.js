@@ -65,9 +65,9 @@ class WebcamProcessor {
           self.process();
 
           const duration = +new Date() - start;
-          const fontSize = 32;
+          const fontSize = 16;
           self.renderCtx.font = fontSize + 'px Arial';
-          self.renderCtx.fillStyle = 'black';
+          self.renderCtx.fillStyle = 'white';
           self.renderCtx.fillText(duration + 'ms', 10, fontSize);
           self.time += duration;
           self.frames += 1;

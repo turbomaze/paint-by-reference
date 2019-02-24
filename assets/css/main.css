@@ -13,8 +13,17 @@ html, body {
   display: none;
 }
 
+.container {
+  display: flex;
+  align-items: flex-start;
+}
+
 #render {
-  width: 960px;
-  height: 540px;
+  width: 640px;
+  height: 360px;
   display; block;
+}
+
+img {
+  width: 640px;
 }

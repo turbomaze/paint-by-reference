@@ -55,8 +55,24 @@ class PaintByReference {
     // adjust the goal
     const xPercent = x / this.reference.width;
     const yPercent = y / this.reference.height;
-    this.goal.x = Math.floor(this.width * xPercent);
-    this.goal.y = Math.floor(this.height * yPercent);
+    const { x: goalX, y: goalY } = this.getGoalXAndY(xPercent, yPercent);
+    this.goal.x = goalX;
+    this.goal.y = goalY;
+  }
+
+  getGoalXAndY(xPercent, yPercent) {
+    if (this.points < 4) return { x: 0, y: 0 };
+
+    const [x0, y0] = this.points[0];
+    const [x1, y1] = this.points[1];
+    const [x2, y2] = this.points[2];
+    const [x3, y3] = this.points[3];
+    const T = [[x1 - x0, x3 - x0, x0], [y1 - y0, y3 - y0, y0], [0, 0, 1]];
+
+    return {
+      x: Math.floor(T[0][0] * xPercent + T[0][1] * yPercent + T[0][2]),
+      y: Math.floor(T[1][0] * xPercent + T[1][1] * yPercent + T[1][2]),
+    };
   }
 
   getImageData() {

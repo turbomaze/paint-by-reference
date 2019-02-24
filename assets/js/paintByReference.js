@@ -1,9 +1,11 @@
 class PaintByReference {
-  constructor(width, height, fps, video, renderCanvas) {
+  constructor(width, height, fps, video, renderCanvas, reference) {
     this.width = width;
     this.height = height;
     this.canvasWidth = this.parsePx(window.getComputedStyle(renderCanvas).width);
     this.canvasHeight = this.parsePx(window.getComputedStyle(renderCanvas).height);
+    this.reference = reference;
+
     this.previousFrame = null;
     this.goal = { x: 100, y: 100, radius: 5, threshold: 80 };
     this.points = [];
@@ -18,6 +20,7 @@ class PaintByReference {
     );
 
     renderCanvas.addEventListener('click', this.handleClick.bind(this), false);
+    reference.addEventListener('click', this.changeGoal.bind(this), false);
   }
 
   parsePx(px) {
@@ -39,6 +42,16 @@ class PaintByReference {
     }
   }
 
+  changeGoal(e) {
+    const rect = this.reference.getBoundingClientRect();
+    const xPercent = (e.clientX - rect.left) / this.reference.width;
+    const yPercent = (e.clientY - rect.top) / this.reference.height;
+
+    this.goal.x = Math.floor(this.width * xPercent);
+    this.goal.y = Math.floor(this.height * yPercent);
+    console.log(this.goal);
+  }
+
   getImageData() {
     const { width, height } = this;
     return this.webcamProcessor.renderCtx.getImageData(0, 0, width, height);
@@ -57,11 +70,6 @@ class PaintByReference {
     const { x, y, radius } = this.goal;
     this.webcamProcessor.renderCtx.fillStyle = 'red';
     this.webcamProcessor.renderCtx.fillRect(x - radius, y - radius, 2 * radius, 2 * radius);
-  }
-
-  randomizeGoal() {
-    this.goal.x = Math.floor(this.width * Math.random());
-    this.goal.y = Math.floor(this.height * Math.random());
   }
 
   renderCanvasOutline() {
@@ -132,7 +140,7 @@ class PaintByReference {
 
     // address the target success case
     if (hitTarget) {
-      this.randomizeGoal();
+      console.log('hit target');
     }
 
     // draw the goal

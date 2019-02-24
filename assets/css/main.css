@@ -1,6 +1,7 @@
 * {
   margin: 0;
   padding: 0;
+  user-select: none;
 }
 
 html, body {
@@ -24,6 +25,18 @@ html, body {
   display; block;
 }
 
-img {
+.reference-container {
+  position: relative;
+}
+
+#reference {
   width: 640px;
+  position: relative;
+}
+
+#reference-dot {
+  position: absolute;
+  background: cyan;
+  width: 6px;
+  height: 6px;
 }

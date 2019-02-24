@@ -1,13 +1,14 @@
 class PaintByReference {
-  constructor(width, height, fps, video, renderCanvas, reference) {
+  constructor(width, height, fps, video, renderCanvas, reference, dot) {
     this.width = width;
     this.height = height;
     this.canvasWidth = this.parsePx(window.getComputedStyle(renderCanvas).width);
     this.canvasHeight = this.parsePx(window.getComputedStyle(renderCanvas).height);
     this.reference = reference;
+    this.dot = dot;
 
     this.previousFrame = null;
-    this.goal = { x: 100, y: 100, radius: 5, threshold: 80 };
+    this.goal = { x: -1, y: -1, radius: 5, threshold: 80 };
     this.points = [];
 
     this.webcamProcessor = new WebcamProcessor(
@@ -44,12 +45,18 @@ class PaintByReference {
 
   changeGoal(e) {
     const rect = this.reference.getBoundingClientRect();
-    const xPercent = (e.clientX - rect.left) / this.reference.width;
-    const yPercent = (e.clientY - rect.top) / this.reference.height;
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
 
+    // mark the goal on the reference
+    this.dot.style.left = x - 2.5 + 'px';
+    this.dot.style.top = y - 2.5 + 'px';
+
+    // adjust the goal
+    const xPercent = x / this.reference.width;
+    const yPercent = y / this.reference.height;
     this.goal.x = Math.floor(this.width * xPercent);
     this.goal.y = Math.floor(this.height * yPercent);
-    console.log(this.goal);
   }
 
   getImageData() {
@@ -68,7 +75,7 @@ class PaintByReference {
 
   renderGoal(goal) {
     const { x, y, radius } = this.goal;
-    this.webcamProcessor.renderCtx.fillStyle = 'red';
+    this.webcamProcessor.renderCtx.fillStyle = 'blue';
     this.webcamProcessor.renderCtx.fillRect(x - radius, y - radius, 2 * radius, 2 * radius);
   }
 

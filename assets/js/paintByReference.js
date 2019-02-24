@@ -39,6 +39,12 @@ class PaintByReference {
     this.webcamProcessor.renderCtx.fillRect(x - radius, y - radius, radius, radius);
   }
 
+  randomizeGoal() {
+    this.goal.x = Math.floor(this.width * Math.random());
+    this.goal.y = Math.floor(this.height * Math.random());
+    console.log(this.goal);
+  }
+
   process() {
     // get the current pixels
     const old = this.getImageData();
@@ -46,23 +52,27 @@ class PaintByReference {
 
     // paint the new pixels
     if (this.previousFrame) {
+      // keep track of whether we hit the target
       const targetIndex = 4 * (this.goal.y * this.width + this.goal.x);
+      let hitTarget = false;
+
+      // compute each pixel's delta
       for (let i = 0; i < next.data.length; i += 4) {
         let error = 0;
         error += Math.abs(old.data[i + 0] - this.previousFrame.data[i + 0]);
         error += Math.abs(old.data[i + 1] - this.previousFrame.data[i + 1]);
         error += Math.abs(old.data[i + 2] - this.previousFrame.data[i + 2]);
-        if (error > this.goal.threshold) {
-          next.data[i + 3] = 255;
+        const errorIsLarge = error > this.goal.threshold;
 
-          if (i === targetIndex) {
-            console.log('gottem!');
-          }
-        } else {
-          next.data[i + 3] = 0;
-        }
+        next.data[i + 3] = errorIsLarge ? 255 : 0;
+        hitTarget = (i === targetIndex && errorIsLarge) || hitTarget;
       }
       this.putImageData(next);
+
+      // address the target success case
+      if (hitTarget) {
+        this.randomizeGoal();
+      }
     }
 
     // draw the goal

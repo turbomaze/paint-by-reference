@@ -67,11 +67,11 @@ class WebcamProcessor {
           const duration = +new Date() - start;
           const fontSize = 16;
           self.renderCtx.font = fontSize + 'px Arial';
-          self.renderCtx.fillStyle = 'white';
+          self.renderCtx.fillStyle = 'red';
           self.renderCtx.fillText(duration + 'ms', 10, fontSize);
           self.time += duration;
           self.frames += 1;
-          if (self.frames % (5 * self.fps) === 0) {
+          if (self.frames % (30 * self.fps) === 0) {
             console.log('Average of ' + self.time / self.frames + 'ms per frame');
           }
         }, 1000 / self.fps);
